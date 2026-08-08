@@ -51,11 +51,14 @@ Một trang mô phỏng tương tác tiêu chuẩn được chia làm 5 tầng c
    * **Khi hiển thị Vector / Hướng / Hình vẽ canvas:** Có mũi tên vector trên đầu (VD: $\vec{F}_1$, $\vec{F}_2$, $\vec{F}_{hl}$).
    * **Khi hiển thị Độ lớn trong ô điều khiển / Ô nhập số thanh trượt:** **BỎ MŨI TÊN VECTOR TRÊN ĐẦU** (chỉ hiển thị $F_1 =$, $F_2 =$). Số $1, 2$ là chỉ số dưới (subscript) viết nhỏ phía dưới chữ $F$, không viết ngang hàng.
    * Không thêm các chữ rườm rà như "Độ lớn F1" vào ô nhập, chỉ giữ ký hiệu $F_1 =$.
-2. **Đơn vị đo:**
+2. **Hiển thị nhãn trên khung mô phỏng (Canvas Labels):**
+   * **BỎ DẤU `=` SAU VÉC-TƠ LỰC**, thay bằng dấu ngoặc vuông `[...]` đặt ngay sau tên vector chỉ hướng (ví dụ: $\vec{F}_1 [10.0\text{ N}]$, $\vec{F}_2 [15.0\text{ N}]$, $\vec{F}_{hl} [21.2\text{ N}]$).
+3. **Đơn vị đo:**
    * Mọi số liệu phải kèm đơn vị chuẩn (VD: $\text{N}$, $\text{m/s}^2$, $\text{m/s}$, $\text{kg}$, $\text{deg }^\circ$).
    * Tỉ lệ xích (Scale): Hiển thị rõ quy đổi (VD: $1\text{ cm} = 1.4\text{ N}$).
-3. **Làm tròn số (Precision Control):**
+4. **Làm tròn số (Precision Control) & Giao diện:**
    * Cho phép chọn số chữ số thập phân ($0, 1, 2, 3$). Mặc định $1$ chữ số thập phân.
+   * Giữ giao diện tối giản, loại bỏ hoàn toàn chế độ phân chia Học sinh / Giáo viên.
 
 ---
 
