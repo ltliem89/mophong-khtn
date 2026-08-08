@@ -1,0 +1,8 @@
+{
+  "name": "Remix AI Hỏi \u0026 Đáp",
+  "description": "Hệ thống AI Hỏi \u0026 Đáp thông minh và Trợ lý xây dựng sản phẩm với phân tích văn bản, hình ảnh, mã nguồn và tra cứu dữ liệu thực tế.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
