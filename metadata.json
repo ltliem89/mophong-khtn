@@ -1,6 +1,6 @@
 {
-  "name": "Remix AI Hỏi \u0026 Đáp",
-  "description": "Hệ thống AI Hỏi \u0026 Đáp thông minh và Trợ lý xây dựng sản phẩm với phân tích văn bản, hình ảnh, mã nguồn và tra cứu dữ liệu thực tế.",
+  "name": "Mô Phỏng Vật Lý 10 – Bài 13: Tổng hợp & Phân tích lực",
+  "description": "Phòng thí nghiệm vật lý ảo tương tác về tổng hợp lực, quy tắc hình bình hành, cân bằng lực và phân tích lực dành cho học sinh lớp 10.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
