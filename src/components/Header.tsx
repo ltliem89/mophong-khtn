@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { AppMode, DecimalPrecision } from '../types';
+import { DecimalPrecision } from '../types';
 import { 
   Atom, 
-  UserCheck, 
-  GraduationCap, 
   HelpCircle, 
   RotateCcw, 
   Layers, 
@@ -11,91 +9,83 @@ import {
   X,
   BookOpen,
   CheckCircle2,
-  Target
+  Target,
+  Minimize2,
+  Maximize2
 } from 'lucide-react';
 
 interface HeaderProps {
-  mode: AppMode;
-  setMode: (mode: AppMode) => void;
   precision: DecimalPrecision;
   setPrecision: (p: DecimalPrecision) => void;
   scaleFactor: number; // Pixels per Newton
   setScaleFactor: (scale: number) => void;
   onResetAll: () => void;
+  isCompact: boolean;
+  setIsCompact: (compact: boolean) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  mode,
-  setMode,
   precision,
   setPrecision,
   scaleFactor,
   setScaleFactor,
   onResetAll,
+  isCompact,
+  setIsCompact,
 }) => {
   const [showHelp, setShowHelp] = useState(false);
 
   return (
     <header className="bg-slate-900 border-b border-slate-800 text-slate-100 sticky top-0 z-40 shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div className={`max-w-7xl mx-auto px-4 ${isCompact ? 'py-2' : 'py-3'} flex flex-wrap items-center justify-between gap-3 transition-all`}>
         {/* Title & Badge */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-            <Atom className="w-6 h-6 animate-spin-slow" />
+        <div className="flex items-center gap-2.5">
+          <div className={`${isCompact ? 'w-8 h-8 rounded-lg' : 'w-10 h-10 rounded-xl'} bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 transition-all`}>
+            <Atom className={`${isCompact ? 'w-4 h-4' : 'w-6 h-6'} animate-spin-slow`} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="font-extrabold text-white text-base sm:text-lg tracking-tight">
+              <h1 className={`font-extrabold text-white tracking-tight ${isCompact ? 'text-sm sm:text-base' : 'text-base sm:text-lg'}`}>
                 BÀI 13 – TỔNG HỢP & PHÂN TÍCH LỰC
               </h1>
-              <span className="hidden sm:inline-block px-2 py-0.5 text-[11px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full">
+              <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full">
                 Vật Lí 10 • KNTT
               </span>
             </div>
-            <p className="text-xs text-slate-400 flex items-center gap-1.5">
-              <span>Phòng thí nghiệm ảo Vật lý tương tác</span>
-              <span className="text-slate-600">•</span>
-              <span className="text-cyan-400 font-medium">Cân bằng & Phân tích lực</span>
-            </p>
+            {!isCompact && (
+              <p className="text-xs text-slate-400 flex items-center gap-1.5">
+                <span>Phòng thí nghiệm ảo Vật lý tương tác</span>
+                <span className="text-slate-600">•</span>
+                <span className="text-cyan-400 font-medium">Cân bằng & Phân tích lực</span>
+              </p>
+            )}
           </div>
         </div>
 
         {/* Global Controls & Mode Switchers */}
         <div className="flex items-center flex-wrap gap-2 text-xs">
-          {/* App Mode Switcher */}
-          <div className="bg-slate-800/90 p-1 rounded-xl border border-slate-700/80 flex items-center">
-            <button
-              onClick={() => setMode('student')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition font-medium ${
-                mode === 'student'
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <GraduationCap className="w-3.5 h-3.5" />
-              <span>Học Sinh</span>
-            </button>
-            <button
-              onClick={() => setMode('teacher')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition font-medium ${
-                mode === 'teacher'
-                  ? 'bg-amber-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <UserCheck className="w-3.5 h-3.5" />
-              <span>Giáo Viên</span>
-            </button>
-          </div>
+          {/* Compressed View Toggle */}
+          <button
+            onClick={() => setIsCompact(!isCompact)}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border font-bold transition ${
+              isCompact
+                ? 'bg-cyan-600 text-white border-cyan-500 shadow-md shadow-cyan-600/20'
+                : 'bg-slate-800/90 text-slate-300 border-slate-700/80 hover:bg-slate-700/80 hover:text-white'
+            }`}
+            title={isCompact ? 'Chuyển sang Chế độ hiển thị đầy đủ' : 'Chuyển sang Chế độ hiển thị thu gọn (Tối ưu màn hình)'}
+          >
+            {isCompact ? <Maximize2 className="w-3.5 h-3.5" /> : <Minimize2 className="w-3.5 h-3.5" />}
+            <span>{isCompact ? 'Chế độ Thu gọn' : 'Thu gọn'}</span>
+          </button>
 
           {/* Decimal Precision Control */}
-          <div className="hidden md:flex items-center gap-1 bg-slate-800/80 px-2.5 py-1.5 rounded-xl border border-slate-700/80 text-slate-300">
+          <div className="hidden md:flex items-center gap-1 bg-slate-800/80 px-2 py-1 rounded-xl border border-slate-700/80 text-slate-300">
             <span className="text-slate-400 text-[11px]">Làm tròn:</span>
             {([0, 1, 2, 3] as DecimalPrecision[]).map((p) => (
               <button
                 key={p}
                 onClick={() => setPrecision(p)}
-                className={`w-6 h-6 rounded-md font-mono text-[11px] font-bold transition ${
+                className={`w-5 h-5 rounded font-mono text-[11px] font-bold transition ${
                   precision === p
                     ? 'bg-blue-600 text-white'
                     : 'text-slate-400 hover:bg-slate-700 hover:text-slate-200'
@@ -107,13 +97,13 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Scale Control */}
-          <div className="hidden lg:flex items-center gap-1.5 bg-slate-800/80 px-2.5 py-1.5 rounded-xl border border-slate-700/80 text-slate-300">
+          <div className="hidden lg:flex items-center gap-1 bg-slate-800/80 px-2 py-1 rounded-xl border border-slate-700/80 text-slate-300">
             <Layers className="w-3.5 h-3.5 text-cyan-400" />
             <span className="text-[11px] text-slate-400">Tỉ lệ:</span>
             <span className="font-mono text-[11px] font-bold text-cyan-300">
-              1 cm = {(20 / scaleFactor).toFixed(1)} N
+              1cm={(20 / scaleFactor).toFixed(1)}N
             </span>
-            <div className="flex gap-1 ml-1">
+            <div className="flex gap-0.5 ml-1">
               <button
                 onClick={() => setScaleFactor(Math.max(4, scaleFactor - 2))}
                 className="px-1.5 py-0.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-[10px] font-bold"
@@ -134,7 +124,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Reset All Button */}
           <button
             onClick={onResetAll}
-            className="p-2 text-slate-400 hover:text-slate-100 bg-slate-800 hover:bg-slate-700/80 border border-slate-700/80 rounded-xl transition"
+            className="p-1.5 text-slate-400 hover:text-slate-100 bg-slate-800 hover:bg-slate-700/80 border border-slate-700/80 rounded-xl transition"
             title="Đặt lại toàn bộ thí nghiệm"
           >
             <RotateCcw className="w-4 h-4" />
@@ -143,7 +133,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Help Button */}
           <button
             onClick={() => setShowHelp(true)}
-            className="flex items-center gap-1 px-3 py-1.5 text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700/80 rounded-xl transition"
+            className="flex items-center gap-1 px-2.5 py-1.5 text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700/80 rounded-xl transition"
           >
             <HelpCircle className="w-4 h-4 text-blue-400" />
             <span className="hidden sm:inline">Hướng dẫn</span>
@@ -195,12 +185,10 @@ export const Header: React.FC<HeaderProps> = ({
 
               <div className="p-3 bg-slate-800/60 rounded-xl border border-slate-700/60 space-y-1.5">
                 <h4 className="font-bold text-purple-400 flex items-center gap-1.5 text-sm">
-                  <Settings2 className="w-4 h-4" /> 3. Chế độ Học sinh vs Giáo viên
+                  <Settings2 className="w-4 h-4" /> 3. Tùy chỉnh hiển thị & Thu gọn
                 </h4>
                 <p>
-                  - **Chế độ Học sinh:** Hướng dẫn khám phá theo quy trình: Dự đoán $\rightarrow$ Thí nghiệm $\rightarrow$ Rút ra kết luận.
-                  <br />
-                  - **Chế độ Giáo viên:** Cho phép khoá thông số, mở ngay đáp án, tùy chỉnh độ khó và thiết lập bài tập cho học sinh.
+                  Sử dụng nút **Thu gọn** trên thanh công cụ để tối ưu không gian làm việc trên màn hình nhỏ. Bạn cũng có thể điều chỉnh độ chính xác làm tròn số và tỉ lệ xích ngay phía trên.
                 </p>
               </div>
             </div>

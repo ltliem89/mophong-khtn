@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { 
-  AppMode, 
   DecimalPrecision, 
   DataRecord, 
-  TeacherConfig, 
   SimulationTab 
 } from './types';
 import { Header } from './components/Header';
@@ -16,27 +14,18 @@ import { DataTable } from './components/DataTable';
 import { ExplorationPanel } from './components/ExplorationPanel';
 import { ChallengePanel } from './components/ChallengePanel';
 import { QuizPanel } from './components/QuizPanel';
-import { TeacherControls } from './components/TeacherControls';
-import { BookOpen, Sparkles, CheckCircle2 } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 
 export default function App() {
-  const [mode, setMode] = useState<AppMode>('student');
   const [precision, setPrecision] = useState<DecimalPrecision>(1);
   const [scaleFactor, setScaleFactor] = useState<number>(14); // pixels per Newton
   const [activeTab, setActiveTab] = useState<MainTabType>('concurrent');
   const [records, setRecords] = useState<DataRecord[]>([]);
+  const [isCompact, setIsCompact] = useState<boolean>(false);
 
   // Motion animation state
   const [objectOffset, setObjectOffset] = useState({ x: 0, y: 0 });
   const [isMoving, setIsMoving] = useState(false);
-
-  // Teacher mode config
-  const [teacherConfig, setTeacherConfig] = useState<TeacherConfig>({
-    lockedParameters: {},
-    difficulty: 'TRUNG BÌNH',
-    presetScenarioName: 'preset1',
-    showDirectAnswer: false,
-  });
 
   // Handle recording measurement results
   const handleRecordData = (newRecord: Omit<DataRecord, 'id' | 'timestamp'>) => {
@@ -59,42 +48,33 @@ export default function App() {
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col selection:bg-blue-500 selection:text-white pb-12">
       {/* Header */}
       <Header
-        mode={mode}
-        setMode={setMode}
         precision={precision}
         setPrecision={setPrecision}
         scaleFactor={scaleFactor}
         setScaleFactor={setScaleFactor}
+        isCompact={isCompact}
+        setIsCompact={setIsCompact}
         onResetAll={handleResetAll}
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6 space-y-6">
-        {/* Teacher Mode Control Banner (If active) */}
-        {mode === 'teacher' && (
-          <TeacherControls
-            config={teacherConfig}
-            onUpdateConfig={(updates) => setTeacherConfig({ ...teacherConfig, ...updates })}
-            onLoadPresetScenario={(scenarioId) => {
-              setTeacherConfig({ ...teacherConfig, presetScenarioName: scenarioId });
-            }}
-          />
-        )}
-
+      <main className={`flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 ${isCompact ? 'pt-3 space-y-3' : 'pt-6 space-y-6'}`}>
         {/* Navigation Tabs */}
         <TabNavigation
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           recordCount={records.length}
+          isCompact={isCompact}
         />
 
         {/* Tab Content Renderer */}
-        <div className="space-y-6">
+        <div className={isCompact ? "space-y-3" : "space-y-6"}>
           {activeTab === 'collinear' && (
             <CollinearTab
               precision={precision}
               scaleFactor={scaleFactor}
               onRecordData={handleRecordData}
+              isCompact={isCompact}
             />
           )}
 
@@ -103,6 +83,7 @@ export default function App() {
               precision={precision}
               scaleFactor={scaleFactor}
               onRecordData={handleRecordData}
+              isCompact={isCompact}
             />
           )}
 
@@ -111,6 +92,7 @@ export default function App() {
               precision={precision}
               scaleFactor={scaleFactor}
               onRecordData={handleRecordData}
+              isCompact={isCompact}
             />
           )}
 
@@ -141,6 +123,7 @@ export default function App() {
             netAngleDeg={45}
             onOffsetChange={setObjectOffset}
             onMovingStateChange={setIsMoving}
+            isCompact={isCompact}
           />
         )}
       </main>

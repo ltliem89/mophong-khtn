@@ -26,19 +26,18 @@ export const ForceSymbol: React.FC<ForceSymbolProps> = ({
 
   return (
     <span className={`inline-flex items-baseline font-extrabold tracking-tight select-none ${className}`}>
-      <span className="relative inline-block pr-[1px]">
-        {showArrow && (
-          <span
-            className="absolute -top-[0.62em] left-0 right-0 text-center text-[0.65em] font-sans leading-none pointer-events-none opacity-90"
-            aria-hidden="true"
-          >
+      {showArrow ? (
+        <span className="relative inline-flex flex-col items-center">
+          <span className="text-[0.6em] font-sans leading-none pointer-events-none select-none text-current opacity-90 -mb-0.5" aria-hidden="true">
             ➔
           </span>
-        )}
+          <span className="leading-none">{main}</span>
+        </span>
+      ) : (
         <span>{main}</span>
-      </span>
+      )}
       {sub && (
-        <sub className="text-[0.7em] font-bold leading-none -bottom-[0.08em] ml-[0.05em]">
+        <sub className="text-[0.75em] font-bold leading-none ml-[0.05em]">
           {sub}
         </sub>
       )}

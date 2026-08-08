@@ -9,9 +9,11 @@ interface ForceControlsProps {
   precision: DecimalPrecision;
   onUpdateForce: (id: string, updates: Partial<ForceVector>) => void;
   showAngleSlider?: boolean;
+  showDirectionToggle?: boolean;
   minMag?: number;
   maxMag?: number;
   stepMag?: number;
+  isCompact?: boolean;
 }
 
 export const ForceControls: React.FC<ForceControlsProps> = ({
@@ -19,16 +21,18 @@ export const ForceControls: React.FC<ForceControlsProps> = ({
   precision,
   onUpdateForce,
   showAngleSlider = true,
+  showDirectionToggle = false,
   minMag = 0,
-  maxMag = 50,
+  maxMag = 100,
   stepMag = 0.5,
+  isCompact = false,
 }) => {
   return (
-    <div className="space-y-4">
+    <div className={isCompact ? "space-y-1.5" : "space-y-2.5"}>
       {forces.map((force) => (
         <div
           key={force.id}
-          className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-3 shadow-md relative overflow-hidden"
+          className={`${isCompact ? 'p-2 rounded-xl space-y-1' : 'p-2.5 rounded-xl space-y-2'} bg-slate-800/80 border border-slate-700/80 shadow-md relative overflow-hidden`}
         >
           {/* Accent Color Left Strip */}
           <div
@@ -36,51 +40,17 @@ export const ForceControls: React.FC<ForceControlsProps> = ({
             style={{ backgroundColor: force.color }}
           />
 
-          {/* Header Row */}
-          <div className="flex items-center justify-between pl-2">
-            <div className="flex items-center gap-2">
+          {/* Magnitude Control: Color Dot + Symbol + Lock + Slider + Numeric Display */}
+          <div className="pl-1.5 flex items-center gap-2">
+            <div className="flex items-center gap-1.5 shrink-0">
               <span
-                className="w-3 h-3 rounded-full shadow-sm"
+                className="w-2.5 h-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: force.color }}
               />
-              <span className="font-extrabold text-white text-sm flex items-center gap-1">
-                Lực <ForceSymbol name={force.name} />
+              <span className="text-slate-100 font-extrabold flex items-center gap-0.5 text-xs whitespace-nowrap">
+                <ForceSymbol name={force.name} showArrow={false} /> =
               </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {force.isLocked && (
-                <span className="px-2 py-0.5 rounded text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1 font-medium">
-                  <Lock className="w-3 h-3" /> Đã khoá
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Magnitude Slider + Numeric Input */}
-          <div className="pl-2 space-y-1.5">
-            <div className="flex items-center justify-between text-xs text-slate-300">
-              <label htmlFor={`mag-${force.id}`} className="text-slate-400 font-medium flex items-center gap-1">
-                Độ lớn (<ForceSymbol name={force.name} showArrow={false} />):
-              </label>
-              <div className="flex items-center gap-1">
-                <input
-                  type="number"
-                  disabled={force.isLocked}
-                  value={formatVal(force.magnitude, precision)}
-                  onChange={(e) => {
-                    const val = parseFloat(e.target.value);
-                    if (!isNaN(val)) {
-                      onUpdateForce(force.id, { magnitude: Math.max(minMag, Math.min(maxMag, val)) });
-                    }
-                  }}
-                  className="w-16 px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg text-right font-mono font-bold text-slate-100 text-xs focus:outline-none focus:border-blue-500 disabled:opacity-50"
-                  step={stepMag}
-                  min={minMag}
-                  max={maxMag}
-                />
-                <span className="font-semibold text-slate-400 text-xs">N</span>
-              </div>
+              {force.isLocked && <Lock className="w-3 h-3 text-amber-400 shrink-0" />}
             </div>
 
             <input
@@ -92,33 +62,38 @@ export const ForceControls: React.FC<ForceControlsProps> = ({
               step={stepMag}
               value={force.magnitude}
               onChange={(e) => onUpdateForce(force.id, { magnitude: parseFloat(e.target.value) })}
-              className="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-50"
+              className="flex-1 h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-50 my-auto"
             />
+
+            <div className="flex items-center gap-1 whitespace-nowrap shrink-0">
+              <input
+                type="number"
+                disabled={force.isLocked}
+                value={formatVal(force.magnitude, precision)}
+                onChange={(e) => {
+                  const val = parseFloat(e.target.value);
+                  if (!isNaN(val)) {
+                    onUpdateForce(force.id, { magnitude: Math.max(minMag, Math.min(maxMag, val)) });
+                  }
+                }}
+                className="w-16 px-1.5 py-0.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-right font-mono font-bold text-slate-100 focus:outline-none focus:border-blue-500 disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                step={stepMag}
+                min={minMag}
+                max={maxMag}
+              />
+              <span className="font-semibold text-slate-400 text-xs">N</span>
+            </div>
           </div>
 
           {/* Angle Slider + Numeric Input (if enabled) */}
           {showAngleSlider && (
-            <div className="pl-2 space-y-1.5 pt-1 border-t border-slate-700/50">
-              <div className="flex items-center justify-between text-xs text-slate-300">
-                <label htmlFor={`angle-${force.id}`} className="text-slate-400 font-medium">Góc hướng (α):</label>
-                <div className="flex items-center gap-1">
-                  <input
-                    type="number"
-                    disabled={force.isLocked}
-                    value={Math.round(force.angleDeg)}
-                    onChange={(e) => {
-                      const val = parseFloat(e.target.value);
-                      if (!isNaN(val)) {
-                        onUpdateForce(force.id, { angleDeg: ((val % 360) + 360) % 360 });
-                      }
-                    }}
-                    className="w-16 px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg text-right font-mono font-bold text-slate-100 text-xs focus:outline-none focus:border-blue-500 disabled:opacity-50"
-                    min={0}
-                    max={360}
-                  />
-                  <span className="font-semibold text-slate-400 text-xs">°</span>
-                </div>
-              </div>
+            <div className="pl-1.5 flex items-center gap-2 pt-1 border-t border-slate-700/50">
+              <label
+                htmlFor={`angle-${force.id}`}
+                className="text-slate-400 font-medium text-xs whitespace-nowrap shrink-0"
+              >
+                Góc α =
+              </label>
 
               <input
                 id={`angle-${force.id}`}
@@ -129,8 +104,60 @@ export const ForceControls: React.FC<ForceControlsProps> = ({
                 step={1}
                 value={force.angleDeg}
                 onChange={(e) => onUpdateForce(force.id, { angleDeg: parseFloat(e.target.value) })}
-                className="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-cyan-500 disabled:opacity-50"
+                className="flex-1 h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-cyan-500 disabled:opacity-50 my-auto"
               />
+
+              <div className="flex items-center gap-1 whitespace-nowrap shrink-0">
+                <input
+                  type="number"
+                  disabled={force.isLocked}
+                  value={Math.round(force.angleDeg)}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    if (!isNaN(val)) {
+                      onUpdateForce(force.id, { angleDeg: ((val % 360) + 360) % 360 });
+                    }
+                  }}
+                  className="w-16 px-1.5 py-0.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-right font-mono font-bold text-slate-100 focus:outline-none focus:border-blue-500 disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  min={0}
+                  max={360}
+                />
+                <span className="font-semibold text-slate-400 text-xs">°</span>
+              </div>
+            </div>
+          )}
+
+          {/* Direction Selector Buttons for Collinear Forces */}
+          {showDirectionToggle && (
+            <div className="pl-1.5 space-y-1 pt-1 border-t border-slate-700/50">
+              <label className="text-slate-400 font-medium text-[10px] block">Chiều hướng lực:</label>
+              <div className="grid grid-cols-2 gap-1.5">
+                <button
+                  type="button"
+                  disabled={force.isLocked}
+                  onClick={() => onUpdateForce(force.id, { angleDeg: 0 })}
+                  className={`px-2 py-0.5 rounded-lg text-[10px] font-bold border transition flex items-center justify-center gap-1 ${
+                    Math.abs(force.angleDeg - 0) < 45 || Math.abs(force.angleDeg - 360) < 45
+                      ? 'bg-blue-600 border-blue-500 text-white shadow-sm'
+                      : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <span>➔ Sang phải (+ Ox)</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={force.isLocked}
+                  onClick={() => onUpdateForce(force.id, { angleDeg: 180 })}
+                  className={`px-2 py-0.5 rounded-lg text-[10px] font-bold border transition flex items-center justify-center gap-1 ${
+                    Math.abs(force.angleDeg - 180) < 45
+                      ? 'bg-pink-600 border-pink-500 text-white shadow-sm'
+                      : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <span>⬅ Sang trái (- Ox)</span>
+                </button>
+              </div>
             </div>
           )}
         </div>

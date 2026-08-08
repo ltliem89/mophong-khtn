@@ -1,7 +1,5 @@
 export type SimulationTab = 'collinear' | 'concurrent' | 'decomposition';
 
-export type AppMode = 'student' | 'teacher';
-
 export type DecimalPrecision = 0 | 1 | 2 | 3;
 
 export interface Vector2D {
@@ -66,15 +64,4 @@ export interface QuizQuestion {
   options: string[];
   correctIdx: number;
   explanation: string;
-}
-
-export interface TeacherConfig {
-  lockedParameters: {
-    f1?: boolean;
-    f2?: boolean;
-    angle?: boolean;
-  };
-  difficulty: 'CƠ BẢN' | 'TRUNG BÌNH' | 'NÂNG CAO';
-  presetScenarioName: string;
-  showDirectAnswer: boolean;
 }

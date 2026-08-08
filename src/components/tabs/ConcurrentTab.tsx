@@ -15,12 +15,14 @@ interface ConcurrentTabProps {
   precision: DecimalPrecision;
   scaleFactor: number;
   onRecordData: (record: Omit<DataRecord, 'id' | 'timestamp'>) => void;
+  isCompact?: boolean;
 }
 
 export const ConcurrentTab: React.FC<ConcurrentTabProps> = ({
   precision,
   scaleFactor,
   onRecordData,
+  isCompact = false,
 }) => {
   const [f1Mag, setF1Mag] = useState(6);
   const [f2Mag, setF2Mag] = useState(8);
@@ -79,9 +81,70 @@ export const ConcurrentTab: React.FC<ConcurrentTabProps> = ({
   });
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div className={`grid grid-cols-1 lg:grid-cols-12 ${isCompact ? 'gap-3' : 'gap-6'}`}>
       {/* Left Column: Canvas & Graph Tool */}
-      <div className="lg:col-span-7 space-y-4">
+      <div className={`lg:col-span-7 ${isCompact ? 'space-y-2.5' : 'space-y-4'}`}>
+        {/* Visibility Toggles Toolbar */}
+        <div className={`${isCompact ? 'p-2' : 'p-3.5'} rounded-2xl bg-slate-900 border border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs`}>
+          <span className="font-bold text-slate-400 flex items-center gap-1">
+            <Eye className={`${isCompact ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-blue-400`} /> Tùy chọn hiển thị:
+          </span>
+
+          <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+            <label className={`flex items-center gap-1 cursor-pointer bg-slate-800/80 ${isCompact ? 'px-2 py-1' : 'px-2.5 py-1.5'} rounded-xl border border-slate-700/80 hover:text-white transition`}>
+              <input
+                type="checkbox"
+                checked={showParallelogram}
+                onChange={(e) => setShowParallelogram(e.target.checked)}
+                className="accent-blue-500 rounded w-3 h-3"
+              />
+              <span>Hình bình hành</span>
+            </label>
+
+            <label className={`flex items-center gap-1 cursor-pointer bg-slate-800/80 ${isCompact ? 'px-2 py-1' : 'px-2.5 py-1.5'} rounded-xl border border-slate-700/80 hover:text-white transition`}>
+              <input
+                type="checkbox"
+                checked={showResultant}
+                onChange={(e) => setShowResultant(e.target.checked)}
+                className="accent-emerald-500 rounded w-3 h-3"
+              />
+              <span>Vector Hợp lực</span>
+            </label>
+
+            <label className={`flex items-center gap-1 cursor-pointer bg-slate-800/80 ${isCompact ? 'px-2 py-1' : 'px-2.5 py-1.5'} rounded-xl border border-slate-700/80 hover:text-white transition`}>
+              <input
+                type="checkbox"
+                checked={showValues}
+                onChange={(e) => setShowValues(e.target.checked)}
+                className="accent-cyan-500 rounded w-3 h-3"
+              />
+              <span>Giá trị N</span>
+            </label>
+
+            <label className={`flex items-center gap-1 cursor-pointer bg-slate-800/80 ${isCompact ? 'px-2 py-1' : 'px-2.5 py-1.5'} rounded-xl border border-slate-700/80 hover:text-white transition`}>
+              <input
+                type="checkbox"
+                checked={showAngles}
+                onChange={(e) => setShowAngles(e.target.checked)}
+                className="accent-pink-500 rounded w-3 h-3"
+              />
+              <span>Góc α</span>
+            </label>
+
+            <button
+              onClick={() => setShowGraph(!showGraph)}
+              className={`${isCompact ? 'px-2.5 py-1 text-[11px]' : 'px-3 py-1.5 text-xs'} rounded-xl border font-semibold flex items-center gap-1 transition ${
+                showGraph
+                  ? 'bg-purple-600 text-white border-purple-500'
+                  : 'bg-slate-800 text-slate-300 border-slate-700 hover:text-white'
+              }`}
+            >
+              <LineChart className="w-3.5 h-3.5" />
+              <span>Đồ thị Fhl(α)</span>
+            </button>
+          </div>
+        </div>
+
         <VectorCanvas
           forces={forces}
           resultantVector={{
@@ -97,6 +160,7 @@ export const ConcurrentTab: React.FC<ConcurrentTabProps> = ({
           showGrid={showGrid}
           scaleFactor={scaleFactor}
           precision={precision}
+          isCompact={isCompact}
           onVectorChange={(id, newMag, newAngleDeg) => {
             if (id === 'f1') setF1Mag(newMag);
             if (id === 'f2') {
@@ -106,97 +170,7 @@ export const ConcurrentTab: React.FC<ConcurrentTabProps> = ({
           }}
         />
 
-        {/* Visibility Toggles Toolbar */}
-        <div className="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <span className="font-bold text-slate-400 flex items-center gap-1.5">
-            <Eye className="w-4 h-4 text-blue-400" /> Tùy chọn hiển thị:
-          </span>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <label className="flex items-center gap-1.5 cursor-pointer bg-slate-800/80 px-2.5 py-1.5 rounded-xl border border-slate-700/80 hover:text-white transition">
-              <input
-                type="checkbox"
-                checked={showParallelogram}
-                onChange={(e) => setShowParallelogram(e.target.checked)}
-                className="accent-blue-500 rounded"
-              />
-              <span>Hình bình hành</span>
-            </label>
-
-            <label className="flex items-center gap-1.5 cursor-pointer bg-slate-800/80 px-2.5 py-1.5 rounded-xl border border-slate-700/80 hover:text-white transition">
-              <input
-                type="checkbox"
-                checked={showResultant}
-                onChange={(e) => setShowResultant(e.target.checked)}
-                className="accent-emerald-500 rounded"
-              />
-              <span>Vector Hợp lực</span>
-            </label>
-
-            <label className="flex items-center gap-1.5 cursor-pointer bg-slate-800/80 px-2.5 py-1.5 rounded-xl border border-slate-700/80 hover:text-white transition">
-              <input
-                type="checkbox"
-                checked={showValues}
-                onChange={(e) => setShowValues(e.target.checked)}
-                className="accent-cyan-500 rounded"
-              />
-              <span>Giá trị N</span>
-            </label>
-
-            <label className="flex items-center gap-1.5 cursor-pointer bg-slate-800/80 px-2.5 py-1.5 rounded-xl border border-slate-700/80 hover:text-white transition">
-              <input
-                type="checkbox"
-                checked={showAngles}
-                onChange={(e) => setShowAngles(e.target.checked)}
-                className="accent-pink-500 rounded"
-              />
-              <span>Góc α</span>
-            </label>
-
-            <button
-              onClick={() => setShowGraph(!showGraph)}
-              className={`px-3 py-1.5 rounded-xl border font-semibold flex items-center gap-1.5 transition ${
-                showGraph
-                  ? 'bg-purple-600 text-white border-purple-500'
-                  : 'bg-slate-800 text-slate-300 border-slate-700 hover:text-white'
-              }`}
-            >
-              <LineChart className="w-3.5 h-3.5" />
-              <span>Đồ thị Fhl(α)</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Live Values Display */}
-        <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 shadow-md">
-          <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
-            <span className="text-[11px] text-blue-400 font-medium flex items-center gap-1">Lực <ForceSymbol name="F1" /></span>
-            <span className="text-lg font-mono font-bold text-blue-300">
-              {formatVal(f1Mag, precision)} N
-            </span>
-          </div>
-
-          <div className="p-3 rounded-xl bg-pink-500/10 border border-pink-500/20">
-            <span className="text-[11px] text-pink-400 font-medium flex items-center gap-1">Lực <ForceSymbol name="F2" /></span>
-            <span className="text-lg font-mono font-bold text-pink-300">
-              {formatVal(f2Mag, precision)} N
-            </span>
-          </div>
-
-          <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
-            <span className="text-[11px] text-purple-400 font-medium block">Góc α (<ForceSymbol name="F1" showArrow={false} />, <ForceSymbol name="F2" showArrow={false} />)</span>
-            <span className="text-lg font-mono font-bold text-purple-300">
-              {alphaDeg}°
-            </span>
-          </div>
-
-          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-            <span className="text-[11px] text-emerald-400 font-medium flex items-center gap-1">Hợp lực <ForceSymbol name="Fhl" /></span>
-            <span className="text-lg font-mono font-bold text-emerald-300">
-              {formatVal(fResultMag, precision)} N
-            </span>
-          </div>
-        </div>
 
         {/* Optional Interactive Graph Overlay */}
         {showGraph && (
@@ -263,9 +237,9 @@ export const ConcurrentTab: React.FC<ConcurrentTabProps> = ({
       </div>
 
       {/* Right Column: Controls & Formula Explanation */}
-      <div className="lg:col-span-5 space-y-6">
+      <div className={`lg:col-span-5 ${isCompact ? 'space-y-3' : 'space-y-6'}`}>
         {/* Angle Alpha Slider Card */}
-        <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+        <div className={`${isCompact ? 'p-2.5 space-y-2' : 'p-4 space-y-3'} rounded-2xl bg-slate-900 border border-slate-800`}>
           <div className="flex items-center justify-between text-xs text-slate-300">
             <span className="font-bold text-slate-200 flex items-center gap-1.5">
               <Compass className="w-4 h-4 text-purple-400" /> Góc giữa hai lực (α):
@@ -278,7 +252,7 @@ export const ConcurrentTab: React.FC<ConcurrentTabProps> = ({
                   const val = parseInt(e.target.value);
                   if (!isNaN(val)) setAlphaDeg(Math.min(180, Math.max(0, val)));
                 }}
-                className="w-16 px-2 py-1 bg-slate-800 border border-slate-700 rounded-lg text-right font-mono font-bold text-purple-300 text-xs focus:outline-none focus:border-purple-500"
+                className="w-20 px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded-lg text-right font-mono font-bold text-purple-300 text-xs focus:outline-none focus:border-purple-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 min={0}
                 max={180}
               />
@@ -293,16 +267,16 @@ export const ConcurrentTab: React.FC<ConcurrentTabProps> = ({
             step={1}
             value={alphaDeg}
             onChange={(e) => setAlphaDeg(parseInt(e.target.value))}
-            className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500"
+            className={`w-full ${isCompact ? 'h-1.5' : 'h-2'} bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500`}
           />
 
           {/* Quick preset angle buttons */}
-          <div className="grid grid-cols-5 gap-1.5 pt-1">
+          <div className="grid grid-cols-5 gap-1 pt-0.5">
             {[0, 45, 60, 90, 180].map((a) => (
               <button
                 key={a}
                 onClick={() => setAlphaDeg(a)}
-                className={`py-1 rounded-lg text-[11px] font-mono font-semibold transition ${
+                className={`py-0.5 rounded-lg text-[10px] font-mono font-semibold transition ${
                   alphaDeg === a
                     ? 'bg-purple-600 text-white'
                     : 'bg-slate-800 text-slate-400 hover:text-slate-200'
@@ -319,6 +293,7 @@ export const ConcurrentTab: React.FC<ConcurrentTabProps> = ({
           forces={forces}
           precision={precision}
           showAngleSlider={false}
+          isCompact={isCompact}
           onUpdateForce={(id, updates) => {
             if (id === 'f1' && updates.magnitude !== undefined) setF1Mag(updates.magnitude);
             if (id === 'f2' && updates.magnitude !== undefined) setF2Mag(updates.magnitude);
@@ -328,24 +303,20 @@ export const ConcurrentTab: React.FC<ConcurrentTabProps> = ({
         {/* Record Data Button */}
         <button
           onClick={handleRecord}
-          className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-lg shadow-emerald-600/20"
+          className={`w-full ${isCompact ? 'py-2 text-[11px]' : 'py-3 text-xs'} bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition shadow-lg shadow-emerald-600/20`}
         >
           <PlusCircle className="w-4 h-4" />
           <span>Ghi vào Bảng Số Liệu Thực Hành</span>
         </button>
 
         {/* Parallelogram Formula Box */}
-        <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2 text-xs text-slate-300">
+        <div className={`${isCompact ? 'p-2.5 space-y-1 text-[11px]' : 'p-4 space-y-2 text-xs'} rounded-2xl bg-slate-900 border border-slate-800 text-slate-300`}>
           <h4 className="font-bold text-emerald-400 text-xs">
             📐 ĐỊNH LÝ HÀM SỐ COS TRONG TỔNG HỢP LỰC:
           </h4>
-          <p className="font-mono text-emerald-300 bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center text-xs font-semibold">
+          <p className="font-mono text-emerald-300 bg-slate-950 p-2 rounded-xl border border-slate-800 text-center text-xs font-semibold">
             F<sub>hl</sub> = √(F₁² + F₂² + 2·F₁·F₂·cos α)
           </p>
-          <ul className="text-[11px] text-slate-400 space-y-1 pt-1 list-disc list-inside">
-            <li>Nối 2 đầu mút vector song song tạo thành hình bình hành.</li>
-            <li>Đường chéo xuất phát từ điểm O là vector hợp lực F<sub>hl</sub>.</li>
-          </ul>
         </div>
       </div>
     </div>
